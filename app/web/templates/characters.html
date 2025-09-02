@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+
+{% block title %}Персонажи - AI Girls{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-pink-600 mb-4">🎭 Наши Персонажи</h1>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Выберите свою идеальную спутницу для интимного общения. Каждый персонаж имеет уникальную личность и характер.
+        </p>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="flex justify-center mb-8">
+        <div class="bg-white rounded-lg shadow-md p-4 flex space-x-4">
+            <button id="filter-all" class="filter-btn active px-4 py-2 rounded-lg bg-pink-500 text-white">
+                Все
+            </button>
+            <button id="filter-free" class="filter-btn px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300">
+                Бесплатные
+            </button>
+            <button id="filter-premium" class="filter-btn px-4 py-2 rounded-lg bg-purple-200 text-purple-700 hover:bg-purple-300">
+                Премиум
+            </button>
+        </div>
+    </div>
+
+    <!-- Список персонажей -->
+    <div id="characters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for character in characters %}
+        <div class="character-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 {{ 'premium' if character.is_premium else 'free' }}">
+            <!-- Изображение персонажа -->
+            <div class="relative h-64 bg-gradient-to-br from-pink-100 to-purple-100">
+                {% if character.image_url %}
+                <img src="{{ character.image_url }}" alt="{{ character.name }}" 
+                     class="w-full h-full object-cover">
+                {% else %}
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-6xl">{{ character.emoji or '👧' }}</div>
+                </div>
+                {% endif %}
+                
+                <!-- Бейдж премиум -->
+                {% if character.is_premium %}
+                <div class="absolute top-4 right-4">
+                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        💎 Премиум
+                    </span>
+                </div>
+                {% else %}
+                <div class="absolute top-4 right-4">
+                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        🆓 Бесплатно
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Информация о персонаже -->
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ character.name }}</h3>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ character.description }}</p>
+                
+                <!-- Характеристики -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for tag in character.tags[:3] %}
+                    <span class="bg-pink-100 text-pink-700 px-2 py-1 rounded-full text-xs">
+                        {{ tag }}
+                    </span>
+                    {% endfor %}
+                </div>
+
+                <!-- Статистика -->
+                <div class="flex justify-between text-sm text-gray-500 mb-4">
+                    <span>💬 {{ character.chats_count or 0 }} чатов</span>
+                    <span>⭐ {{ "%.1f"|format(character.rating or 4.5) }}</span>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="flex space-x-2">
+                    <button onclick="startChat({{ character.id }})" 
+                            class="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-4 rounded-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 font-semibold">
+                        💬 Начать чат
+                    </button>
+                    <button onclick="viewProfile({{ character.id }})" 
+                            class="bg-gray-200 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                        👁️
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if pagination.pages > 1 %}
+    <div class="flex justify-center mt-12">
+        <nav class="flex space-x-2">
+            {% if pagination.has_prev %}
+            <a href="?page={{ pagination.prev_num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                ← Назад
+            </a>
+            {% endif %}
+            
+            {% for page_num in pagination.iter_pages() %}
+                {% if page_num %}
+                    {% if page_num != pagination.page %}
+                    <a href="?page={{ page_num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                        {{ page_num }}
+                    </a>
+                    {% else %}
+                    <span class="px-4 py-2 bg-pink-500 text-white rounded-lg">
+                        {{ page_num }}
+                    </span>
+                    {% endif %}
+                {% else %}
+                <span class="px-4 py-2">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+            <a href="?page={{ pagination.next_num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
+                Вперед →
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Модальное окно профиля персонажа -->
+<div id="character-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="relative">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl">
+                    ×
+                </button>
+                <div id="modal-content">
+                    <!-- Контент будет загружен динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentFilter = 'all';
+
+// Фильтрация персонажей
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const filter = this.id.replace('filter-', '');
+        setActiveFilter(filter);
+        filterCharacters(filter);
+    });
+});
+
+function setActiveFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-pink-500', 'text-white');
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+    });
+    
+    const activeBtn = document.getElementById(`filter-${filter}`);
+    activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+    activeBtn.classList.add('active', 'bg-pink-500', 'text-white');
+}
+
+function filterCharacters(filter) {
+    const cards = document.querySelectorAll('.character-card');
+    cards.forEach(card => {
+        if (filter === 'all') {
+            card.style.display = 'block';
+        } else if (filter === 'free' && card.classList.contains('free')) {
+            card.style.display = 'block';
+        } else if (filter === 'premium' && card.classList.contains('premium')) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Начать чат с персонажем
+function startChat(characterId) {
+    // Проверяем авторизацию
+    if (!isAuthenticated()) {
+        showLoginModal();
+        return;
+    }
+    
+    // Проверяем подписку для премиум персонажей
+    const card = document.querySelector(`[onclick="startChat(${characterId})"]`).closest('.character-card');
+    if (card.classList.contains('premium') && !hasPremium()) {
+        showPremiumModal();
+        return;
+    }
+    
+    // Перенаправляем в чат
+    window.location.href = `/chat/${characterId}`;
+}
+
+// Просмотр профиля персонажа
+function viewProfile(characterId) {
+    fetch(`/api/characters/${characterId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showCharacterModal(data.character);
+            } else {
+                showError('Ошибка загрузки профиля');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showError('Ошибка загрузки профиля');
+        });
+}
+
+function showCharacterModal(character) {
+    const modal = document.getElementById('character-modal');
+    const content = document.getElementById('modal-content');
+    
+    content.innerHTML = `
+        <div class="p-6">
+            <div class="flex items-center mb-6">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center text-3xl mr-4">
+                    ${character.emoji || '👧'}
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">${character.name}</h2>
+                    <p class="text-gray-600">${character.age || '18'} лет</p>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">О персонаже</h3>
+                <p class="text-gray-700">${character.description}</p>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Личность</h3>
+                <p class="text-gray-700">${character.personality}</p>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Интересы</h3>
+                <div class="flex flex-wrap gap-2">
+                    ${(character.tags || []).map(tag => 
+                        `<span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm">${tag}</span>`
+                    ).join('')}
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <div class="text-sm text-gray-500">
+                    <div>💬 ${character.chats_count || 0} чатов</div>
+                    <div>⭐ ${(character.rating || 4.5).toFixed(1)} рейтинг</div>
+                </div>
+                <button onclick="startChat(${character.id})" 
+                        class="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 px-6 rounded-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 font-semibold">
+                    💬 Начать чат
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('character-modal').classList.add('hidden');
+}
+
+// Проверка авторизации
+function isAuthenticated() {
+    return localStorage.getItem('auth_token') !== null;
+}
+
+// Проверка премиум подписки
+function hasPremium() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.role === 'premium';
+}
+
+// Показать модальное окно входа
+function showLoginModal() {
+    // Редирект на страницу входа
+    window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+}
+
+// Показать модальное окно премиума
+function showPremiumModal() {
+    window.location.href = '/premium';
+}
+
+// Показать ошибку
+function showError(message) {
+    // Простая реализация показа ошибки
+    alert(message);
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация появления карточек
+    const cards = document.querySelectorAll('.character-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

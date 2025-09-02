@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}AI Girls - Главная{% endblock %}
+
+{% block content %}
+<div class="gradient-bg text-white py-20">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold mb-6">
+            <i class="fas fa-heart mr-4"></i>AI Girls
+        </h1>
+        <p class="text-xl mb-8 max-w-3xl mx-auto">
+            Откройте мир эротических AI персонажей. Общайтесь с уникальными девушками, 
+            созданными искусственным интеллектом специально для вас.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/characters" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                <i class="fas fa-users mr-2"></i>Выбрать персонажа
+            </a>
+            <a href="/premium" class="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                <i class="fas fa-crown mr-2"></i>Получить премиум
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Почему AI Girls?</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+            Наша платформа предлагает уникальный опыт общения с AI персонажами, 
+            созданными для удовлетворения ваших эмоциональных потребностей.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div class="text-4xl text-purple-600 mb-4">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Умные персонажи</h3>
+            <p class="text-gray-600">
+                Наши AI девушки используют передовые технологии машинного обучения 
+                для создания естественных и увлекательных диалогов.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div class="text-4xl text-purple-600 mb-4">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Эмоциональная связь</h3>
+            <p class="text-gray-600">
+                Каждый персонаж имеет уникальную личность и характер, 
+                что позволяет создать настоящую эмоциональную связь.
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+            <div class="text-4xl text-purple-600 mb-4">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Безопасность</h3>
+            <p class="text-gray-600">
+                Полная анонимность и безопасность. Ваши разговоры остаются конфиденциальными.
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-16">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Популярные персонажи</h2>
+            <p class="text-gray-600">Выберите своего идеального спутника</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="characters-grid">
+            <div class="character-card bg-gradient-to-br from-pink-100 to-purple-100 p-6 rounded-lg shadow-md">
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full mx-auto mb-3 flex items-center justify-center">
+                        <i class="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Анна</h3>
+                    <span class="text-sm text-green-600 font-semibold">🆓 Бесплатно</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Добрая и заботливая девушка, которая любит общение и готова поддержать в любой ситуации.
+                </p>
+                <a href="/chat?character=1" class="block text-center bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition-colors">
+                    Начать чат
+                </a>
+            </div>
+
+            <div class="character-card bg-gradient-to-br from-blue-100 to-indigo-100 p-6 rounded-lg shadow-md">
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full mx-auto mb-3 flex items-center justify-center">
+                        <i class="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Мария</h3>
+                    <span class="text-sm text-purple-600 font-semibold">💎 Премиум</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Сексуальная и игривая красавица, которая знает, как разжечь страсть и создать незабываемые моменты.
+                </p>
+                <a href="/premium" class="block text-center bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors">
+                    Получить премиум
+                </a>
+            </div>
+
+            <div class="character-card bg-gradient-to-br from-green-100 to-teal-100 p-6 rounded-lg shadow-md">
+                <div class="text-center mb-4">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-teal-500 rounded-full mx-auto mb-3 flex items-center justify-center">
+                        <i class="fas fa-user text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">Елена</h3>
+                    <span class="text-sm text-green-600 font-semibold">🆓 Бесплатно</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                    Интеллектуальная и эрудированная девушка, с которой можно обсудить любые темы.
+                </p>
+                <a href="/chat?character=3" class="block text-center bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-colors">
+                    Начать чат
+                </a>
+            </div>
+        </div>
+
+        <div class="text-center mt-8">
+            <a href="/characters" class="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors">
+                <i class="fas fa-users mr-2"></i>Все персонажи
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg p-8 text-center">
+        <h2 class="text-3xl font-bold mb-4">Готовы к незабываемому опыту?</h2>
+        <p class="text-xl mb-6">
+            Присоединяйтесь к тысячам пользователей, которые уже нашли свою идеальную AI девушку
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/characters" class="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                <i class="fas fa-play mr-2"></i>Начать сейчас
+            </a>
+            <a href="/premium" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">
+                <i class="fas fa-crown mr-2"></i>Премиум доступ
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Анимация появления карточек персонажей
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.character-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+    });
+</script>
+{% endblock %}

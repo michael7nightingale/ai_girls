@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Премиум подписка - AI Girls{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-pink-600 mb-4">💎 Премиум подписка</h1>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Откройте для себя мир безграничного общения с эксклюзивными AI персонажами
+        </p>
+    </div>
+
+    <!-- Преимущества премиума -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div class="bg-white rounded-xl p-6 text-center shadow-lg">
+            <div class="text-4xl mb-4">♾️</div>
+            <h3 class="text-lg font-semibold mb-2">Безлимитные сообщения</h3>
+            <p class="text-gray-600">Общайтесь сколько угодно без ограничений</p>
+        </div>
+        
+        <div class="bg-white rounded-xl p-6 text-center shadow-lg">
+            <div class="text-4xl mb-4">👑</div>
+            <h3 class="text-lg font-semibold mb-2">Эксклюзивные персонажи</h3>
+            <p class="text-gray-600">Доступ к премиум персонажам</p>
+        </div>
+        
+        <div class="bg-white rounded-xl p-6 text-center shadow-lg">
+            <div class="text-4xl mb-4">⚡</div>
+            <h3 class="text-lg font-semibold mb-2">Приоритетная поддержка</h3>
+            <p class="text-gray-600">Быстрые ответы от нашей команды</p>
+        </div>
+        
+        <div class="bg-white rounded-xl p-6 text-center shadow-lg">
+            <div class="text-4xl mb-4">🎁</div>
+            <h3 class="text-lg font-semibold mb-2">Эксклюзивные функции</h3>
+            <p class="text-gray-600">Дополнительные возможности чата</p>
+        </div>
+    </div>
+
+    <!-- Планы подписки -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <!-- Месячный план -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-500 p-6 text-white text-center">
+                <h3 class="text-2xl font-bold mb-2">Месячная</h3>
+                <div class="text-4xl font-bold mb-2">$9.99</div>
+                <p class="text-blue-100">в месяц</p>
+            </div>
+            <div class="p-6">
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Безлимитные сообщения
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Доступ к премиум персонажам
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Приоритетная поддержка
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Расширенная история чатов
+                    </li>
+                </ul>
+                <button onclick="subscribe('monthly')" 
+                        class="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 font-semibold">
+                    Выбрать план
+                </button>
+            </div>
+        </div>
+
+        <!-- Годовой план (популярный) -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden transform scale-105 border-2 border-pink-500">
+            <div class="bg-gradient-to-r from-pink-500 to-purple-500 p-6 text-white text-center relative">
+                <div class="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold">
+                    Экономия 50%
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Годовая</h3>
+                <div class="text-4xl font-bold mb-2">$59.99</div>
+                <p class="text-pink-100">в год</p>
+                <p class="text-sm text-pink-200 mt-2">$4.99 в месяц</p>
+            </div>
+            <div class="p-6">
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Все преимущества месячного плана
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Эксклюзивные функции
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Приоритетный доступ к новым персонажам
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Персональные настройки
+                    </li>
+                </ul>
+                <button onclick="subscribe('yearly')" 
+                        class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-3 px-6 rounded-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 font-semibold">
+                    Выбрать план
+                </button>
+            </div>
+        </div>
+
+        <!-- Пожизненный план -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-6 text-white text-center">
+                <h3 class="text-2xl font-bold mb-2">Пожизненная</h3>
+                <div class="text-4xl font-bold mb-2">$199</div>
+                <p class="text-purple-100">одноразово</p>
+            </div>
+            <div class="p-6">
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Все преимущества навсегда
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        VIP статус
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Персональный менеджер
+                    </li>
+                    <li class="flex items-center">
+                        <span class="text-green-500 mr-2">✓</span>
+                        Эксклюзивный контент
+                    </li>
+                </ul>
+                <button onclick="subscribe('lifetime')" 
+                        class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-semibold">
+                    Выбрать план
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сравнение планов -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-center mb-8">Сравнение планов</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b">
+                        <th class="text-left py-4 px-4">Функция</th>
+                        <th class="text-center py-4 px-4">Бесплатный</th>
+                        <th class="text-center py-4 px-4">Месячный</th>
+                        <th class="text-center py-4 px-4">Годовой</th>
+                        <th class="text-center py-4 px-4">Пожизненный</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b">
+                        <td class="py-4 px-4">Сообщений в день</td>
+                        <td class="text-center py-4 px-4">10</td>
+                        <td class="text-center py-4 px-4">∞</td>
+                        <td class="text-center py-4 px-4">∞</td>
+                        <td class="text-center py-4 px-4">∞</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-4 px-4">Премиум персонажи</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-4 px-4">История чатов</td>
+                        <td class="text-center py-4 px-4">7 дней</td>
+                        <td class="text-center py-4 px-4">30 дней</td>
+                        <td class="text-center py-4 px-4">∞</td>
+                        <td class="text-center py-4 px-4">∞</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-4 px-4">Приоритетная поддержка</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="py-4 px-4">Эксклюзивные функции</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-4">VIP статус</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">❌</td>
+                        <td class="text-center py-4 px-4">✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+        <h2 class="text-2xl font-bold text-center mb-8">Часто задаваемые вопросы</h2>
+        <div class="space-y-6">
+            <div class="border-b pb-4">
+                <h3 class="text-lg font-semibold mb-2">Как отменить подписку?</h3>
+                <p class="text-gray-600">Вы можете отменить подписку в любое время в настройках аккаунта. Отмена вступит в силу в конце текущего периода.</p>
+            </div>
+            <div class="border-b pb-4">
+                <h3 class="text-lg font-semibold mb-2">Можно ли изменить план?</h3>
+                <p class="text-gray-600">Да, вы можете изменить план в любое время. При переходе на более дорогой план доплата будет рассчитана пропорционально.</p>
+            </div>
+            <div class="border-b pb-4">
+                <h3 class="text-lg font-semibold mb-2">Есть ли возврат средств?</h3>
+                <p class="text-gray-600">Мы предлагаем 30-дневную гарантию возврата средств для новых подписчиков.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-2">Какие способы оплаты принимаются?</h3>
+                <p class="text-gray-600">Мы принимаем все основные кредитные карты, PayPal, Apple Pay и Google Pay.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Готовы начать?</h2>
+        <p class="text-xl text-gray-600 mb-8">Присоединяйтесь к тысячам довольных пользователей</p>
+        <button onclick="scrollToPlans()" 
+                class="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-4 px-8 rounded-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-200 font-semibold text-lg">
+            Выбрать план сейчас
+        </button>
+    </div>
+</div>
+
+<!-- Модальное окно оплаты -->
+<div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Оформление подписки</h3>
+                <p class="text-gray-600">Выберите способ оплаты</p>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <button onclick="processPayment('card')" 
+                        class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200">
+                    💳 Кредитная карта
+                </button>
+                <button onclick="processPayment('paypal')" 
+                        class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    PayPal
+                </button>
+                <button onclick="processPayment('crypto')" 
+                        class="w-full bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200">
+                    ₿ Криптовалюта
+                </button>
+            </div>
+            
+            <button onclick="closePaymentModal()" 
+                    class="w-full bg-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+                Отмена
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedPlan = null;
+
+function subscribe(plan) {
+    selectedPlan = plan;
+    
+    // Проверяем авторизацию
+    if (!isAuthenticated()) {
+        window.location.href = '/login?redirect=' + encodeURIComponent('/premium');
+        return;
+    }
+    
+    showPaymentModal();
+}
+
+function showPaymentModal() {
+    document.getElementById('payment-modal').classList.remove('hidden');
+}
+
+function closePaymentModal() {
+    document.getElementById('payment-modal').classList.add('hidden');
+    selectedPlan = null;
+}
+
+function processPayment(method) {
+    if (!selectedPlan) {
+        showError('План не выбран');
+        return;
+    }
+    
+    // Показываем индикатор загрузки
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Обработка...';
+    button.disabled = true;
+    
+    // Отправляем запрос на создание платежа
+    fetch('/api/billing/create-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+        },
+        body: JSON.stringify({
+            plan: selectedPlan,
+            payment_method: method
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.payment_url) {
+                // Перенаправляем на страницу оплаты
+                window.location.href = data.payment_url;
+            } else {
+                showSuccess('Подписка успешно оформлена!');
+                closePaymentModal();
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 2000);
+            }
+        } else {
+            showError(data.message || 'Ошибка при создании платежа');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showError('Ошибка при создании платежа');
+    })
+    .finally(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+    });
+}
+
+function scrollToPlans() {
+    const plansSection = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-3');
+    plansSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function isAuthenticated() {
+    return localStorage.getItem('auth_token') !== null;
+}
+
+function showError(message) {
+    // Простая реализация показа ошибки
+    alert('Ошибка: ' + message);
+}
+
+function showSuccess(message) {
+    // Простая реализация показа успеха
+    alert('Успех: ' + message);
+}
+
+// Закрытие модального окна при клике вне его
+document.getElementById('payment-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePaymentModal();
+    }
+});
+</script>
+{% endblock %}

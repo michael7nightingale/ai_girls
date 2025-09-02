@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}AI Girls - Управление Ollama{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">
+            <i class="fas fa-robot mr-2"></i>Управление Ollama
+        </h1>
+        <p class="text-gray-600 mb-6">
+            Управляйте локальными LLM моделями для генерации ответов AI персонажей
+        </p>
+        
+        <!-- Статус Ollama -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <h2 class="text-xl font-semibold mb-3">Статус системы</h2>
+            <div id="ollama-status" class="flex items-center space-x-2">
+                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-600"></div>
+                <span>Проверка статуса...</span>
+            </div>
+        </div>
+        
+        <!-- Доступные модели -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Доступные модели</h2>
+            <div id="models-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="text-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-2"></div>
+                    <span class="text-gray-500">Загрузка моделей...</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Рекомендуемые модели -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3">Рекомендуемые модели</h2>
+            <div id="recommended-models" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Модели будут загружены динамически -->
+            </div>
+        </div>
+        
+        <!-- Загрузка новой модели -->
+        <div class="bg-gray-50 rounded-lg p-4">
+            <h2 class="text-xl font-semibold mb-3">Загрузить модель</h2>
+            <div class="flex space-x-2">
+                <input 
+                    type="text" 
+                    id="model-name-input" 
+                    placeholder="Название модели (например: llama2)" 
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                <button 
+                    onclick="pullModel()" 
+                    class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                    <i class="fas fa-download mr-2"></i>Загрузить
+                </button>
+            </div>
+            <div id="pull-status" class="mt-2"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Загрузка статуса Ollama
+async function loadOllamaStatus() {
+    try {
+        const response = await fetch('/api/ollama/status');
+        const status = await response.json();
+        
+        const statusDiv = document.getElementById('ollama-status');
+        if (status.status === 'running') {
+            statusDiv.innerHTML = `
+                <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+                <span class="text-green-600 font-semibold">Онлайн</span>
+                <span class="text-gray-500">(${status.models_count} моделей)</span>
+            `;
+        } else {
+            statusDiv.innerHTML = `
+                <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+                <span class="text-red-600 font-semibold">Офлайн</span>
+                <span class="text-gray-500">${status.error || ''}</span>
+            `;
+        }
+    } catch (error) {
+        document.getElementById('ollama-status').innerHTML = `
+            <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+            <span class="text-red-600 font-semibold">Ошибка подключения</span>
+        `;
+    }
+}
+
+// Загрузка списка моделей
+async function loadModels() {
+    try {
+        const response = await fetch('/api/ollama/models');
+        const models = await response.json();
+        
+        const modelsDiv = document.getElementById('models-list');
+        if (models.length === 0) {
+            modelsDiv.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+                    <p class="text-gray-500">Модели не найдены</p>
+                    <p class="text-sm text-gray-400">Загрузите модели из списка рекомендуемых</p>
+                </div>
+            `;
+            return;
+        }
+        
+        modelsDiv.innerHTML = models.map(model => `
+            <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold text-gray-800">${model.name}</h3>
+                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Установлена</span>
+                </div>
+                <p class="text-sm text-gray-600 mb-2">Размер: ${formatSize(model.size)}</p>
+                <p class="text-xs text-gray-500">Обновлена: ${formatDate(model.modified_at)}</p>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        document.getElementById('models-list').innerHTML = `
+            <div class="col-span-full text-center py-8">
+                <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-4"></i>
+                <p class="text-red-600">Ошибка загрузки моделей</p>
+            </div>
+        `;
+    }
+}
+
+// Загрузка рекомендуемых моделей
+async function loadRecommendedModels() {
+    try {
+        const response = await fetch('/api/ollama/models/recommended');
+        const data = await response.json();
+        
+        const recommendedDiv = document.getElementById('recommended-models');
+        recommendedDiv.innerHTML = data.models.map(model => `
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold text-gray-800">${model}</h3>
+                    <button 
+                        onclick="pullModel('${model}')" 
+                        class="text-xs bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 transition-colors"
+                    >
+                        <i class="fas fa-download mr-1"></i>Загрузить
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600">Рекомендуемая модель для AI Girls</p>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        document.getElementById('recommended-models').innerHTML = `
+            <div class="col-span-full text-center py-8">
+                <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-4"></i>
+                <p class="text-red-600">Ошибка загрузки рекомендуемых моделей</p>
+            </div>
+        `;
+    }
+}
+
+// Загрузка модели
+async function pullModel(modelName = null) {
+    const modelInput = document.getElementById('model-name-input');
+    const model = modelName || modelInput.value.trim();
+    
+    if (!model) {
+        showMessage('Введите название модели', 'error');
+        return;
+    }
+    
+    const statusDiv = document.getElementById('pull-status');
+    statusDiv.innerHTML = `
+        <div class="flex items-center space-x-2 text-blue-600">
+            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+            <span>Загрузка модели ${model}...</span>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`/api/ollama/models/${model}/pull`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            statusDiv.innerHTML = `
+                <div class="flex items-center space-x-2 text-green-600">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Модель ${model} успешно загружена!</span>
+                </div>
+            `;
+            modelInput.value = '';
+            
+            // Обновляем списки
+            setTimeout(() => {
+                loadModels();
+                loadOllamaStatus();
+            }, 1000);
+        } else {
+            const error = await response.json();
+            statusDiv.innerHTML = `
+                <div class="flex items-center space-x-2 text-red-600">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Ошибка: ${error.detail}</span>
+                </div>
+            `;
+        }
+    } catch (error) {
+        statusDiv.innerHTML = `
+            <div class="flex items-center space-x-2 text-red-600">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Ошибка подключения</span>
+            </div>
+        `;
+    }
+}
+
+// Вспомогательные функции
+function formatSize(bytes) {
+    if (!bytes) return 'Неизвестно';
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Неизвестно';
+    return new Date(dateString).toLocaleDateString('ru-RU');
+}
+
+function showMessage(message, type = 'info') {
+    const div = document.createElement('div');
+    div.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg ${
+        type === 'error' ? 'bg-red-500 text-white' : 
+        type === 'success' ? 'bg-green-500 text-white' : 
+        'bg-blue-500 text-white'
+    }`;
+    div.textContent = message;
+    document.body.appendChild(div);
+    
+    setTimeout(() => {
+        div.remove();
+    }, 3000);
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    loadOllamaStatus();
+    loadModels();
+    loadRecommendedModels();
+    
+    // Обновляем каждые 30 секунд
+    setInterval(() => {
+        loadOllamaStatus();
+    }, 30000);
+});
+</script>
+{% endblock %}
